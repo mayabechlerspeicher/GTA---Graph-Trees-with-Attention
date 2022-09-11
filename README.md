@@ -1,4 +1,4 @@
-# GTA
+# GTA - Graph Trees with Attention
 ### Decision trees for graph data
 ### Paper: https://arxiv.org/abs/2207.02760
 
