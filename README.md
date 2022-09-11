@@ -1,5 +1,5 @@
 # GTA
-### Learning decision trees for graph data
+### Decision trees for graph data
 ### Paper: https://arxiv.org/abs/2207.02760
 
 ## The library is Scikit compatible.
