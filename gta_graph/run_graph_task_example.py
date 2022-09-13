@@ -16,8 +16,8 @@ def print_trees(model):
 def test(model, X, y):
     y_preds = model.predict(X).flatten()
     l2 = mean_squared_error(y, y_preds)
-    auc = roc_auc_score(y, y_preds)
-    acc = accuracy_score(y, y_preds)
+    auc = roc_auc_score(y.flatten(), y_preds)
+    acc = accuracy_score(y.flatten(), y_preds)
     return l2, auc, acc
 
 

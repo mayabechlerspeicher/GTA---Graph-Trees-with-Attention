@@ -1,7 +1,7 @@
 import numpy as np
 from typing import List
 from scipy import sparse
-
+from scipy.sparse import diags
 
 class GraphData:
     def __init__(self, adj_mat: np.array, features: np.array, label: np.generic = np.NAN):
@@ -124,9 +124,9 @@ class SparseGraphData(GraphData):
             sparse_features_masked[:, not_in_attention] = 0
             propagated_features = sparse_power * sparse_features_masked
             return propagated_features.toarray()
-        elif attention_type == 5:
-            sparse_power = self.sparse_adj_powers[walk_len]
-            diag = sparse_power.diagonal()
+        elif attention_type == 4:
+            masked_sparse_power = self.sparse_adj_powers[walk_len]
+            diag = masked_sparse_power.diagonal()
             sparse_power_diag = diags(diag, [0])
             propagated_features = sparse_power_diag * self.sparse_features
             return propagated_features.toarray()
