@@ -102,7 +102,7 @@ class GTANode(BaseEstimator, RegressorMixin):
 
         return self
 
-    def fit(self, X: np.array, y: np.array):  # , eval_set = None):
+    def fit(self, X: np.array, y: np.array):
         X = X.flatten()
         y = y.flatten()
         if len(X) != len(y):

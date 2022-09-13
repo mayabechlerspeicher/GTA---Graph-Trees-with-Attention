@@ -19,19 +19,18 @@ def print_trees(model):
 def test(model, X, y):
     y_preds = model.predict(X).flatten()
     l2 = mean_squared_error(y, y_preds)
-    auc = roc_auc_score(y.flatten(), y_preds)
-    acc = accuracy_score(y.flatten(), y_preds)
+    auc = roc_auc_score(y, y_preds)
+    acc = accuracy_score(y, y_preds)
     return l2, auc, acc
 
 
-def start():
+def run(attention_types=[1, 4]):
     n_estimators = 50
     learning_rate = 0.1
     max_number_of_leafs = 10
     max_attention_depth = 1
     max_graph_depth = 1
     walk_lens = list(range(0, max_graph_depth + 1))
-    attention_types = [1, 4]
 
     formatter = DataFormatter(GraphData)
     graph, y_nodes = datasets.Planetoid_CORA(formatter)
@@ -50,11 +49,13 @@ def start():
         base_estimator=GTANode(
             max_number_of_leafs=max_number_of_leafs,
             max_attention_depth=max_attention_depth,
-            walk_lens=walk_lens),
+            walk_lens=walk_lens,
+            attention_types=attention_types),
         n_estimators=n_estimators,
-        learning_rate=learning_rate,
-        attention_types=attention_types)
+        learning_rate=learning_rate)
 
     gbgta.fit(X_train, y_train)
     l2_test, auc_test, acc_test = test(gbgta, X_test, y_test)
     print("Test: l2 %5f accuracy %5f auc %5f" % (l2_test, acc_test, auc_test))
+
+run()
