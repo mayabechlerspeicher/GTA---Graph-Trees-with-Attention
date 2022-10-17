@@ -79,11 +79,11 @@ class GTANode(BaseEstimator, RegressorMixin):
             Estimator instance.
         """
         if not params:
-            # Simple optimization to gain speed (inspect is slow)
+
             return self
         valid_params = self.get_params(deep=True)
 
-        nested_params = defaultdict(dict)  # grouped by prefix
+        nested_params = defaultdict(dict)
         for key, value in params.items():
             key, delim, sub_key = key.partition("__")
             if key not in valid_params:
@@ -104,7 +104,7 @@ class GTANode(BaseEstimator, RegressorMixin):
 
         return self
 
-    def fit(self, X: np.array, y: np.array):  # , eval_set = None):
+    def fit(self, X: np.array, y: np.array):
         X = X.flatten()
         y = y.flatten()
         if len(X) != len(y):
@@ -124,11 +124,10 @@ class GTANode(BaseEstimator, RegressorMixin):
         self.tree_learner_ = TreeNodeLearner(params=params, active=list(range(0, self.graph.get_number_of_nodes())),
                                              parent=None)
         self.train_L2, self.train_total_gain = self.tree_learner_.fit(X, y)
-        # self.trained_tree_ = self.tree_learner_.build_trained_tree_and_get_root() #TODO implement for node task
         return self
 
     def predict(self, X: List[int]):
-        all_predictions = self.tree_learner_.predict_all()  # in trunsdactive all vertices are classified during training
+        all_predictions = self.tree_learner_.predict_all()
         if isinstance(X, np.ndarray):
             X = X[0].tolist()
         array = np.array(all_predictions[X])

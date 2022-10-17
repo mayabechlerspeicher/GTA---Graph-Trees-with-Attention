@@ -25,9 +25,7 @@ class Aggregator:
         new_attentions = []
         raw_attentions = self.attention_set_generator(activations, threshold)
         for raw in raw_attentions:
-            # the numpy.where function returns a single-item tuple which is the 
-            # array of indices of relevant items. The following lines convert the
-            # return value of numpy.where to a list
+
             if type(raw) is tuple:
                 new_attentions.append(raw[0].tolist())
             else:
@@ -50,7 +48,7 @@ def _generate_attention_sets_normalized(x, threshold):
     and the second element is the indices of the examples less than the normalized threshold.
     """
     return [np.where(x >= threshold / x.size),
-            np.where(x < threshold / x.size)]  # the notrmalization is on the size of the attention set
+            np.where(x < threshold / x.size)]
 
 
 def _generate_attention_sets_plain(x, threshold):

@@ -1,5 +1,4 @@
 import numpy as np
-from numpy.linalg import matrix_power
 from typing import List
 from scipy import sparse
 from scipy.sparse import diags
@@ -97,7 +96,6 @@ class SparseGraphData(GraphData):
             walks.append(powered)
         self.sparse_adj_powers = np.array(walks)
 
-    # TODO: improve starting with zeros
     def propagate_with_attention(self, walk_len, attention_set, attention_type):
         n_nodes = self.get_number_of_nodes()
         not_in_attention = np.array(list(set(range(n_nodes)) - set(
