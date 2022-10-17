@@ -29,6 +29,7 @@ class GTANode(BaseEstimator, RegressorMixin):
                  ):
         self.train_total_gain = None
         self.train_L2 = None
+        self.trained_tree_ = None  # root
         self.tree_learner_ = None
         self.tree_learner = None
         self.walk_lens = walk_lens
@@ -78,10 +79,11 @@ class GTANode(BaseEstimator, RegressorMixin):
             Estimator instance.
         """
         if not params:
+            # Simple optimization to gain speed (inspect is slow)
             return self
         valid_params = self.get_params(deep=True)
 
-        nested_params = defaultdict(dict)
+        nested_params = defaultdict(dict)  # grouped by prefix
         for key, value in params.items():
             key, delim, sub_key = key.partition("__")
             if key not in valid_params:
@@ -102,11 +104,14 @@ class GTANode(BaseEstimator, RegressorMixin):
 
         return self
 
-    def fit(self, X: np.array, y: np.array):
+    def fit(self, X: np.array, y: np.array):  # , eval_set = None):
         X = X.flatten()
         y = y.flatten()
         if len(X) != len(y):
             raise ValueError("Size of X and y mismatch")
+
+        self.graph.compute_walks(self.walk_lens[-1])
+
         params = TreeNodeLearnerParams(
             walks_lens=self.walk_lens,
             max_attention_depth=self.max_attention_depth,
@@ -116,12 +121,14 @@ class GTANode(BaseEstimator, RegressorMixin):
             graph=self.graph,
             attention_types=self.attention_types
         )
-        self.tree_learner_ = TreeNodeLearner(params, list(range(0, self.graph.get_number_of_nodes())), None)
+        self.tree_learner_ = TreeNodeLearner(params=params, active=list(range(0, self.graph.get_number_of_nodes())),
+                                             parent=None)
         self.train_L2, self.train_total_gain = self.tree_learner_.fit(X, y)
+        # self.trained_tree_ = self.tree_learner_.build_trained_tree_and_get_root() #TODO implement for node task
         return self
 
     def predict(self, X: List[int]):
-        all_predictions = self.tree_learner_.predict_all()
+        all_predictions = self.tree_learner_.predict_all()  # in trunsdactive all vertices are classified during training
         if isinstance(X, np.ndarray):
             X = X[0].tolist()
         array = np.array(all_predictions[X])
